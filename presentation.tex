@@ -1,0 +1,295 @@
+\documentclass[titlepage,usenames,a4,landscape,semhelv]{seminar}
+\usepackage{graphicx}
+%\usepackage[breaklines]{listings}
+\usepackage{seminar}
+%\usepackage[pdftex]{color}
+\usepackage{hyperref}
+\input{seminar.bug}
+\input{seminar.bg2}
+\usepackage{tabularx}
+\usepackage{fancyhdr}
+\noxcomment
+  \renewcommand{\slidetopmargin}{15.5mm}
+  \renewcommand{\slidebottommargin}{13mm}
+  %\renewcommand{\slideleftmargin}{-1cm}
+  %\renewcommand{\slideleftmargin}{-1cm}
+\newcommand{\bitem}[1]{\item {\bf #1}: }
+  %\renewcommand{\sliderightmargin}{1cm}
+\newcommand{\catfile}[1]{ \newslide {\bf #1} 
+	{\scriptsize 
+		\tt 
+		\lstinputlisting[language=PERL,breaklines=true]{#1} 
+	} 
+}
+\newcommand{\sslide}[1]{ \newslide
+	{\huge\bf #1}
+}
+\newcommand{\ttt}[1]{
+	``{\tt #1}''
+}
+\newcommand{\svg}{SoftChange SVG }
+\newcommand{\php}{SoftChange PHP }
+\newcommand{\gettitle}{\sf{
+OCaml Tutorial
+}}
+\title{\gettitle}
+\renewcommand{\thetitle}{\gettitle}
+\newcommand{\listperl}[1]{
+	{\scriptsize
+		\tt
+	\lstinputlisting[language=PERL,breaklines=true]{#1}
+	}
+}
+\newcommand{\listidl}[1]{
+	{\scriptsize
+		\tt
+	\lstinputlisting[language=IDL,breaklines=true]{#1}
+	}
+}
+\newcommand{\hrf}[1]{
+	\href{#1}{#1}
+}
+%\newenvironment{notes}[0]{\tt \begin{note}}{ \end{note}  }
+
+\newcommand{\softChange}{\textsf{softChange}\ }
+\newcommand{\igColumnReal}[1]{\includegraphics[width=.9\textwidth]{#1}}
+\newcommand{\igH}[1]{\includegraphics[height=.9\textheight]{#1}}
+\newcommand{\igReal}[1]{\includegraphics[width=.9\textwidth]{#1}}
+\author{Abram Hindle\\
+Kitchener Waterloo Perl Monger \\
+http://kw.pm.org\\
+abez@abez.ca
+} \date{\today}
+\markboth{ }{Abram Hindle \thesection }
+
+\newcommand{\albertaCVS}{\textsf{JReflex}\ }
+\fancyhf{} % Clear all fields
+\renewcommand{\headrulewidth}{1.2mm}
+\renewcommand{\footrulewidth}{1.2mm}
+%\fancyhead[C]{\small Abram Hindle {\bf \gettitle } CSC483A/583B}
+%\fancyhead[R]{\color{white} \small Abram Hindle}
+%\fancyhead[L]{\color{white}  \bf \gettitle}
+%\fancyfoot[L]{\color{white} \course}
+%\fancyfoot[R]{\color{white} \small \thepage}
+\fancyfoot[L]{\small Abram Hindle}
+\fancyhead[L]{ \bf \gettitle}
+%\fancyfoot[L]{\course}
+\fancyfoot[R]{\small \thepage}
+\slideframe{none}
+\renewcommand{\headwidth}{\textwidth}
+\renewcommand{\slidetopmargin}{2cm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\pagestyle{fancy} %bars..
+%\normalcolor{white}
+%\definecolor{Textcolor}{cmyk}{1,1,1,0}
+\begin{slide}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+=OCaml
+* Functional Language
+* Multiple paradigms: Imperative, Functional, Object Oriented
+* Heavy Generic support
+* Interpreted or Byte code compiled or native
+* Free as in Freedom (LGPL)
+* Type Inferenced
+* Cross Platform
+
+=Why use OCaml?
+* Fast, according the programming language shootouts OCaml is often better speed than even C++
+* Statically Typed. Everything except marshalling is type safe. You can't break type safety without obvious hacks.
+* Numerical Computation
+* Performance oriented applications: statistics, mathematics, audio, multimedia
+* Reasonable external library support
+* Easy to integrate with existing C and C++ libraries.
+* Threads (native or interpreted)
+
+=OCaml Lists
+*
+\begin{verbatim}
+(* construct a list *)
+let l = 1 :: [] in
+let l = [ 1 ; 2; 3 ] in
+let l = [ 1 ] @ [ 2 ; 3 ] in
+let l = 1 :: 2 :: 3 :: [] in
+let fst::rest = l in
+let fst::snd::third::rest = l in
+\end{verbatim}
+
+=OCaml List Operations
+*
+\begin{verbatim}
+let third = List.nth 2 [1 ;2 ;3] in
+let squares = List.map (fun x -> x * x) [ 1 ; 2 ; 3] in
+let sum = List.fold_left (+) 0 [ 1 ; 2 ;  3] in
+let product = List.fold_left ( * ) 1 [ 1 ; 2 ;  3] in
+let gt4 = List.map ( fun x -> (x, x > 4) ) [ 1 ; 2 ; 3 ; 4 ; 5; 6 ] in
+let gt4 = List.filter (fun x -> x > 4) [2 ; 4 ; 6; 8] in
+let tf  = List.exists (fun x -> 10 = x) [ 1 ; 2 ; 10] in
+\end{verbatim}
+
+=OCaml Array Operations
+*
+\begin{verbatim}
+let third = Array.nth 2 [| 1 ;2 ;3 |] in
+let squares = Array.map (fun x -> x * x) [| 1 ; 2 ; 3 |] in
+let sum = Array.fold_left (+) 0 [| 1 ; 2 ;  3 |] in
+let product = Array.fold_left ( * ) 1 [| 1 ; 2 ;  3 |] in
+let gt4 = Array.map ( fun x -> (x, x > 4) ) [| 1 ; 2 ; 3 ; 4 ; 5; 6 |] in
+let gt4 = Array.filter (fun x -> x > 4) [| 2 ; 4 ; 6; 8 |] in
+let tf  = Array.exists (fun x -> 10 = x) [| 1 ; 2 ; 10 |] in
+\end{verbatim}
+
+=OCaml Functions
+*
+\begin{verbatim}
+let f x = x in
+let f (a,b) = (b,a) in
+let f = (* closure *)
+  let x = 9 in
+  (fun y -> y * x)
+in
+let rec f n =
+  if (n > 0) then f (n - 1) else n
+in
+\end{verbatim}
+=OCaml Functions
+*
+\begin{verbatim}
+(* lets use pattern matching *)
+let rec f = function
+   0 -> 0
+ | n -> f (n - 1)
+in
+
+\end{verbatim}
+=OCaml Conditionals
+*
+\begin{verbatim}
+let res = if (cond) then value1 else value2 in
+let res = match x where
+     x::xs -> Some (x::xs) (* pattern matching *)
+   | []    -> None
+in
+let not_none = match x where 
+     None -> false
+   | _ -> true
+in
+\end{verbatim}
+=OCaml Types
+*
+\begin{verbatim}
+let a = (x,y) ;; (* tuples can be of mixed types *)
+type color = { r : int ; g : int ; b : int };;
+let b = { r = 1.0 ; g = 0.5; b = 0.5 } ;; (* structs *)
+type cheese = Cheese of string;; 
+let c = Cheese(``Havarti'');;
+type coord = ((a:int) * (b:int));;
+\end{verbatim}
+=OCaml types and class SML Style
+*
+\begin{verbatim}
+type pizza =   Crust of pizza | Pepperoni | Olives 
+             | Cheese of pizza list ;;
+let pizza = Crust(Cheese(
+   [ Pepperoni ; Olives ; Crust(Pepperoni)]
+));;
+let rec just_crust_and_cheese = 
+  function 
+     Crust(x) -> just_crust_and_cheese x
+   | Cheese([]) -> true
+   | Cheese(x)  -> List.for_all just_crust_and_cheese x
+   | _  -> false
+;;
+just_crust_and_cheese (Crust(Cheese([])));;
+just_crust_and_cheese pizza;;
+\end{verbatim}
+
+=OCaml line endings
+* \texttt{in} means assign the value of the express to this symbol in this scope. Much like mathemtical notation
+* \texttt{;} semi-colon is similar to the perl comma operator. It means ignore the return value of this expression (usually used with Unit expression)
+* \texttt{;;} Used to terminated global scope, this is if you want to make globals or globally accessible functions
+* \texttt{\_} Couldn't find a good slide for \texttt{\_} it just means match anything or ignore the value. Many programs are run by \texttt{let \_ = expr1 ; expr2 ; expr2 ;;}
+
+=OCaml values are not mutable
+* Most values are not mutable (arrays and strings are mutable)
+* Even struct entries are not mutable. if you change them you are copying them.
+        * \begin{verbatim}type foo = { num : int; mutable name: string }\end{verbatim}
+* Arrays have mutable values
+* References are possible: 
+        * \begin{verbatim}let i = ref 0\end{verbatim}
+* To change a struct or a reference:
+        * \begin{verbatim}
+(* deref i and add 1 to it and assign it *)
+i := !i + 1; array.(!i) <- !i; (* array assn *)
+(* assign a value to an entry in a struct *)
+f.name <- ``lolcakes'';
+\end{verbatim}
+
+
+=Helpful OCaml modules
+* The default modules handle things like Unix syscalls to do networking and some synchronization primitives. Even wimpy regexes.
+* PCRE helps OCaml alot, the interface is very clear.
+* Camlimages - image library
+* SDL - for generaly multimedia
+* Lablgtk - GTK bindings
+* ocaml-gsl - Gnu Scientific Library
+
+=OCaml Sucks 
+* The comment and integer multiply cause little syntax
+bugs
+
+* Can't declare operator classes like haskell. Basically no operator
+overloading. Floats and ints don't share same operator but everything
+shares >, = ,< and compare
+
+* Can't generalize classes easily (use :> operator)
+
+* Not a lot of libraries. Not a lot of tools.
+
+* Arrays limited to 4mb of entries. Strings are limited to 4mb in size.
+
+* When to use ;, in, or ;; is often confusing.
+
+* Name Spaces can clash
+
+=OCaml Sucks pt2
+* No default easy way to write binary ints or floats out to file handles or strings. 
+
+* Some of the API is really lacking and often you need external libs to make up for it.
+
+* Many libs are old or out of date.
+
+* Documentation regarding the C interface is lacking (no description of how to iterate through a linked list)
+
+* Printf is a hack. You have to declare types properly as a format not
+a string to pass a template into Printf.
+
+* Negative floating point numbers should be put in parentheses.
+
+=OCaml debugging tips
+* If you can interpret or compile to byte code you can use ocaml's interpretter to help debug
+* Add more types. If you're not sure how an integer is being used stop using integers, make a type like \texttt{NumWaiters of int} to help check the types.
+* If things get really painful syntactically you can always use Camlp4 but that probably won't help you debug.
+* Learn how OCaml describes types, most compilation issues deal with not converting types or the compiler thinks you are using it wrong.
+* When debuging start putting type hints everywhere like:
+\begin{verbatim}
+let fabs (x:float) = if x >= 0. then x else (-1.0) *. x in
+\end{verbatim}
+
+
+=OCaml summary
+* Flexible language which allows for a variety programming styles
+* Statically Typed
+* Fast
+* Sometimes cryptic and annoying
+* Using OCaml's type system is like programming while writing millions of assert statements which only get run at a compile time.
+* I use OCaml for performance and I use perl for text processing and web automation and general scripts.
+* I didn't cover classes, modules or functors
+=
+
+
+\end{slide}
+\end{document}
