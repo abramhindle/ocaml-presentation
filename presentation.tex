@@ -56,9 +56,10 @@ OCaml Tutorial
 \newcommand{\igH}[1]{\includegraphics[height=.9\textheight]{#1}}
 \newcommand{\igReal}[1]{\includegraphics[width=.9\textwidth]{#1}}
 \author{Abram Hindle\\
-Kitchener Waterloo Perl Monger \\
-http://kw.pm.org\\
-abez@abez.ca
+Edmonton Functional Programming User Group\\
+http://efpug.blogspot.ca\\
+abram.hindle@softwareprocess.es\\
+http://softwareprocess.es/
 } \date{\today}
 \markboth{ }{Abram Hindle \thesection }
 
@@ -169,11 +170,11 @@ in
 *
 \begin{verbatim}
 let res = if (cond) then value1 else value2 in
-let res = match x where
+let res = match x with
      x::xs -> Some (x::xs) (* pattern matching *)
    | []    -> None
 in
-let not_none = match x where 
+let not_none = match x with
      None -> false
    | _ -> true
 in
@@ -186,7 +187,7 @@ type color = { r : int ; g : int ; b : int };;
 let b = { r = 1.0 ; g = 0.5; b = 0.5 } ;; (* structs *)
 type cheese = Cheese of string;; 
 let c = Cheese(``Havarti'');;
-type coord = ((a:int) * (b:int));;
+type coord = int * int;;
 \end{verbatim}
 =OCaml types and class SML Style
 *
@@ -228,6 +229,56 @@ i := !i + 1; array.(!i) <- !i; (* array assn *)
 f.name <- ``lolcakes'';
 \end{verbatim}
 
+=Modules
+* Modules are modular interfaces, not just a collection of types and
+methods.
+* Signatures define the interface:
+\begin{verbatim}
+module type Addable = sig 
+    type t 
+    val zero: t
+    val add: t -> t -> t
+end;;
+\end{verbatim}
+* Structures implement the interface:
+\begin{verbatim}
+module Integers = struct
+    type t = int
+    let zero = 0
+    let add x y = x + y
+end;;
+\end{verbatim}
+* Another client:
+\begin{verbatim}
+module Floats = struct
+    type t = float
+    let zero = 0.0
+    let add x y = x +. y
+end;;
+\end{verbatim}
+
+=Functors
+* A big selling point of OCaml and modules is the composition of
+modules via functors!
+\begin{verbatim}
+module AddAll = functor (X: Addable) -> struct
+    type t = X.t
+    let addAll x = List.fold_left X.add X.zero x
+end;;
+\end{verbatim}
+* 
+\begin{verbatim}
+module IntAddAll = AddAll (Integers);;
+IntAddAll.addAll( [ 1; 2; 3; 4; 5; 6 ] );;
+type ilist = int list
+module ILists = struct
+    type t = ilist
+    let zero = []
+    let add ilist1 ilist2 = List.append ilist1 ilist2
+end;;
+module IListAdd = AddAll ( ILists );;
+IListAdd.addAll([[1;2;3];[1;2;3];[1;2;3]]);;
+\end{verbatim}
 
 =Helpful OCaml modules
 * The default modules handle things like Unix syscalls to do networking and some synchronization primitives. Even wimpy regexes.
